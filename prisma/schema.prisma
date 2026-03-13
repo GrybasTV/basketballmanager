@@ -1,0 +1,340 @@
+// Basketball Manager - Database Schema
+// Based on docs/schema.md and other documentation
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// 1. PAGRINDINĖS LENTELĖS (Core Infrastructure)
+// ============================================
+
+model User {
+  id              String   @id @default(cuid())
+  username        String   @unique
+  email           String   @unique
+  passwordHash    String   @map("password_hash")
+  lastLoginAt     DateTime? @map("last_login_at")
+  vacationModeEnd DateTime? @map("vacation_mode_end")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  team Team?
+
+  @@map("users")
+}
+
+model Country {
+  id        String   @id @default(cuid())
+  name      String
+  code      String   @unique // LT, US, FR, etc.
+  createdAt DateTime @default(now()) @map("created_at")
+
+  teams   Team[]   @relation("CountryTeams")
+  players Player[] @relation("CountryPlayers")
+  leagues League[] @relation("LeagueCountry")
+
+  @@map("countries")
+}
+
+model League {
+  id          String   @id @default(cuid())
+  name        String
+  type        String   // LOCAL_I, LOCAL_II, EUROPEAN
+  tier        Int      // 1-50
+  countryId   String?  @map("country_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  country         Country? @relation("LeagueCountry", fields: [countryId], references: [id])
+  localTeams      Team[]   @relation("LocalLeague")
+  europeanTeams   Team[]   @relation("EuropeanLeague")
+  matches         Match[]
+
+  @@map("leagues")
+}
+
+model Team {
+  id               String   @id @default(cuid())
+  name             String
+  city             String
+  countryId        String   @map("country_id")
+  prestige         Int      @default(50) // 0-99
+  wageBudget       Int      @default(100000) @map("wage_budget")
+  transferBudget   Int      @default(500000) @map("transfer_budget")
+  isAiControlled   Boolean  @default(false) @map("is_ai_controlled")
+  localLeagueId    String   @map("local_league_id")
+  europeanLeagueId String?  @map("european_league_id")
+  userId           String?  @unique @map("user_id")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  country        Country  @relation("CountryTeams", fields: [countryId], references: [id])
+  localLeague    League   @relation("LocalLeague", fields: [localLeagueId], references: [id])
+  europeanLeague League?  @relation("EuropeanLeague", fields: [europeanLeagueId], references: [id])
+  user           User?    @relation(fields: [userId], references: [id])
+  players        Player[]
+  contracts      Contract[]
+  coaches        Coach[]
+  homeMatches    Match[]  @relation("HomeMatches")
+  awayMatches    Match[]  @relation("AwayMatches")
+
+  @@map("teams")
+}
+
+// ============================================
+// 2. ŽAIDĖJAI IR SUTARTYS
+// ============================================
+
+model Player {
+  id             String   @id @default(cuid())
+  teamId         String   @map("team_id")
+  firstName      String   @map("first_name")
+  lastName       String   @map("last_name")
+  age            Int
+  birthCountryId String   @map("birth_country_id")
+  position       String   // PG, SG, SF, PF, C
+  height         Int      // cm (160-230)
+  weight         Int      // kg (70-150)
+  ovr            Int      @default(50) // 0-99
+  pot            Int      @default(60) // Potential 0-99 (hidden)
+  loyalty        Int      @default(50) // 0-99
+  morale         Int      @default(70) // 0-99
+  rhythm         Int      @default(70) // 0-99
+
+  // Puolimo įgūdžiai (0-99)
+  closeRange      Int @default(50) @map("close_range")
+  midRange        Int @default(50) @map("mid_range")
+  threePoint      Int @default(50) @map("three_point")
+  freeThrow       Int @default(50) @map("free_throw")
+  ballHandling    Int @default(50) @map("ball_handling")
+  passing         Int @default(50) @map("passing")
+  offensiveReb    Int @default(50) @map("offensive_reb")
+
+  // Gynybos įgūdžiai (0-99)
+  perimeterDef    Int @default(50) @map("perimeter_def")
+  interiorDef     Int @default(50) @map("interior_def")
+  steal           Int @default(50) @map("steal")
+  block           Int @default(50) @map("block")
+  defensiveReb    Int @default(50) @map("defensive_reb")
+
+  // Fiziniai atributai (0-99)
+  speed       Int @default(50) @map("speed")
+  strength    Int @default(50) @map("strength")
+  vertical    Int @default(50) @map("vertical")
+  stamina     Int @default(70) @map("stamina")
+  injuryProne Int @default(30) @map("injury_prone") // Traumingumas
+
+  // Mentalitetas (0-99)
+  basketballIQ Int @default(50) @map("basketball_iq")
+  clutch       Int @default(50) @map("clutch")
+
+  // Dinaminiai rodikliai
+  injuryStatus  String @default("HEALTHY") @map("injury_status") // HEALTHY, INJURED, REHAB
+  fatigueSeason Int    @default(0) @map("fatigue_season") // 0-100
+  form          Int    @default(70) @map("form") // 0-99
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  team         Team    @relation(fields: [teamId], references: [id])
+  birthCountry Country @relation("CountryPlayers", fields: [birthCountryId], references: [id])
+  contracts    Contract[]
+  stats        PlayerStats[]
+  matchStats   MatchPlayerStats[]
+
+  @@map("players")
+}
+
+model Contract {
+  id               String   @id @default(cuid())
+  playerId         String   @map("player_id")
+  teamId           String   @map("team_id")
+  weeklyWage       Int      @map("weekly_wage")
+  expiresAtSeason  Int      @map("expires_at_season") // Season number
+  effectiveAtSeason Int     @map("effective_at_season") // When contract starts
+  releaseClause    Int?     @map("release_clause")
+  isLoan           Boolean  @default(false) @map("is_loan")
+  loanMinGuarantee Int?     @map("loan_min_guarantee") // Minutes guarantee
+  isRenewable      Boolean  @default(true) @map("is_renewable")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  player Player @relation(fields: [playerId], references: [id])
+  team   Team   @relation(fields: [teamId], references: [id])
+
+  @@map("contracts")
+}
+
+model Agent {
+  id          String   @id @default(cuid())
+  name        String
+  greed       Int      @default(50) // 0-99
+  reputation  Int      @default(50) // 0-99
+  negotiation Int      @default(50) // 0-99
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  offers Offer[]
+
+  @@map("agents")
+}
+
+model Offer {
+  id            String   @id @default(cuid())
+  playerId      String   @map("player_id")
+  teamId        String   @map("team_id")
+  agentId       String   @map("agent_id")
+  wageOffered   Int      @map("wage_offered")
+  roleOffered   String   @map("role_offered") // STAR, STARTER, BENCH, PROSPECT
+  minutesOffered Int     @map("minutes_offered")
+  offerCategory String   @map("offer_category") // CURRENT_SEASON, NEXT_SEASON
+  status        String   @default("PENDING") // PENDING, REJECTED, ACCEPTED, EXPIRED
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  agent Agent @relation(fields: [agentId], references: [id])
+
+  @@map("offers")
+}
+
+// ============================================
+// 3. SIMULIACIJA IR REZULTATAI
+// ============================================
+
+model Match {
+  id          String   @id @default(cuid())
+  leagueId    String   @map("league_id")
+  homeTeamId  String   @map("home_team_id")
+  awayTeamId  String   @map("away_team_id")
+  homeScore   Int      @default(0) @map("home_score")
+  awayScore   Int      @default(0) @map("away_score")
+  isPlayed    Boolean  @default(false) @map("is_played")
+  isPlayoff   Boolean  @default(false) @map("is_playoff")
+  seriesId    String?  @map("series_id")
+  matchDay    Int      @map("match_day") // Day of season (1-44)
+  playedAt    DateTime? @map("played_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  league      League              @relation(fields: [leagueId], references: [id])
+  homeTeam    Team                @relation("HomeMatches", fields: [homeTeamId], references: [id])
+  awayTeam    Team                @relation("AwayMatches", fields: [awayTeamId], references: [id])
+  playerStats MatchPlayerStats[]
+
+  @@map("matches")
+}
+
+model MatchPlayerStats {
+  id           String   @id @default(cuid())
+  matchId      String   @map("match_id")
+  playerId     String   @map("player_id")
+  teamId       String   @map("team_id")
+  minutes      Int      @default(0)
+  points       Int      @default(0)
+  rebounds     Int      @default(0)
+  assists      Int      @default(0)
+  steals       Int      @default(0)
+  blocks       Int      @default(0)
+  turnovers    Int      @default(0)
+  fouls        Int      @default(0)
+  fgMade       Int      @default(0) @map("fg_made")
+  fgAttempted  Int      @default(0) @map("fg_attempted")
+  threePtMade  Int      @default(0) @map("three_pt_made")
+  threePtAtt   Int      @default(0) @map("three_pt_att")
+  ftMade       Int      @default(0) @map("ft_made")
+  ftAttempted  Int      @default(0) @map("ft_attempted")
+
+  match  Match  @relation(fields: [matchId], references: [id])
+  player Player @relation(fields: [playerId], references: [id])
+
+  @@map("match_player_stats")
+}
+
+model PlayerStats {
+  id             String   @id @default(cuid())
+  playerId       String   @map("player_id")
+  season         Int
+  gamesPlayed    Int      @default(0) @map("games_played")
+  gamesStarted   Int      @default(0) @map("games_started")
+  minutes        Int      @default(0)
+  points         Float    @default(0)
+  rebounds       Float    @default(0)
+  assists        Float    @default(0)
+  steals         Float    @default(0)
+  blocks         Float    @default(0)
+  turnovers      Float    @default(0)
+  fgPercent      Float?   @map("fg_percent")
+  threePtPercent Float?   @map("three_pt_percent")
+  ftPercent      Float?   @map("ft_percent")
+
+  player Player @relation(fields: [playerId], references: [id])
+
+  @@unique([playerId, season])
+  @@map("player_stats")
+}
+
+model PlayoffSeries {
+  id          String   @id @default(cuid())
+  leagueId    String   @map("league_id")
+  team1Id     String   @map("team1_id")
+  team2Id     String   @map("team2_id")
+  team1Wins   Int      @default(0) @map("team1_wins")
+  team2Wins   Int      @default(0) @map("team2_wins")
+  bestOf      Int      @default(3) @map("best_of") // 3 or 5
+  winnerTeamId String? @map("winner_team_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("playoff_series")
+}
+
+// ============================================
+// 4. PERSONALAS
+// ============================================
+
+model Coach {
+  id          String   @id @default(cuid())
+  teamId      String   @map("team_id")
+  name        String
+  rotation    Int      @default(50) // 0-99
+  tactics     Int      @default(50) // 0-99
+  development Int      @default(50) // 0-99
+  motivation  Int      @default(50) // 0-99
+  salary      Int      @default(5000)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  team Team @relation(fields: [teamId], references: [id])
+
+  @@map("coaches")
+}
+
+// ============================================
+// 5. SEZONAS IR ŽAIDIMO BŪSENA
+// ============================================
+
+model SeasonState {
+  id        String   @id @default(cuid())
+  season    Int      @default(1)
+  matchDay  Int      @default(1) @map("match_day") // 1-44
+  phase     String   @default("REGULAR_SEASON") // REGULAR_SEASON, PLAYOFFS, OFFSEASON
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("season_state")
+}
+
+// ============================================
+// 6. PRANEŠIMAI (Notifications)
+// ============================================
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  type      String   // INJURY, OFFER_REJECTED, MATCH_START, BUDGET_WARNING
+  content   String
+  isRead    Boolean  @default(false) @map("is_read")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("notifications")
+}

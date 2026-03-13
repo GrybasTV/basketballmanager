@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd \"C:/Users/GrybasTV/Documents/basketballprojekt\" && npm install prisma @prisma/client)",
+      "Bash(cd \"C:/Users/GrybasTV/Documents/basketballprojekt\" && npx prisma init --datasource-provider sqlite)",
+      "Bash(cd \"C:/Users/GrybasTV/Documents/basketballprojekt\" && npx prisma migrate dev --name init)",
+      "Bash(cd \"C:/Users/GrybasTV/Documents/basketballprojekt\" && npx prisma generate)",
+      "Bash(cd \"C:/Users/GrybasTV/Documents/basketballprojekt\" && npm install -D tsx)",
+      "Bash(cd \"C:/Users/GrybasTV/Documents/basketballprojekt\" && npm ls @prisma/client)",
+      "Bash(ls \"C:/Users/GrybasTV/Documents/basketballprojekt/node_modules/@prisma/client\" 2>/dev/null || dir \"C:\\\\Users\\\\GrybasTV\\\\Documents\\\\basketballprojekt\\\\node_modules\\\\@prisma\\\\client\")",
+      "Bash(ls \"C:/Users/GrybasTV/Documents/basketballprojekt/node_modules/.prisma/client\" 2>/dev/null || dir \"C:\\\\Users\\\\GrybasTV\\\\Documents\\\\basketballprojekt\\\\node_modules\\\\.prisma\\\\client\")",
+      "Bash(cd \"C:/Users/GrybasTV/Documents/basketballprojekt\" && npm install prisma@6 @prisma/client@6)",
+      "Bash(cd \"C:/Users/GrybasTV/Documents/basketballprojekt\" && npm install -D tailwindcss postcss autoprefixer)",
+      "Bash(cd \"C:/Users/GrybasTV/Documents/basketballprojekt\" && npm run dev)",
+      "Read(//c/Users/GrybasTV/.claude/**)",
+      "Bash(/plugin marketplace:*)",
+      "Bash(cd /c/Users/GrybasTV/.claude && /plugin install frontend-design@claude-code-plugins)",
+      "Bash(cd \"C:/Users/GrybasTV/Documents/basketballprojekt\" && npm run test)",
+      "Bash(cd \"C:/Users/GrybasTV/Documents/basketballprojekt\" && npm install @tailwindcss/postcss)",
+      "Bash(cd \"C:/Users/GrybasTV/Documents/basketballprojekt\" && rm -f .next/dev/lock && taskkill /F /PID 8780 2>/dev/null; sleep 2 && npm run dev)",
+      "Bash(cd \"C:/Users/GrybasTV/Documents/basketballprojekt\" && curl -s http://localhost:3001/ | head -20)",
+      "Bash(taskkill /F /PID 8780 2>/dev/null; rm -f \"C:/Users/GrybasTV/Documents/basketballprojekt/.next/dev/lock\")",
+      "Bash(cd \"C:\\\\Users\\\\GrybasTV\\\\Documents\\\\basketballprojekt\" && npm install next-auth@beta bcryptjs && npm install -D @types/bcryptjs)",
+      "Bash(cd \"C:\\\\Users\\\\GrybasTV\\\\Documents\\\\basketballprojekt\" && npm install zod)",
+      "Bash(cd \"C:/Users/GrybasTV/Documents/basketballprojekt\" && npm run build 2>&1)",
+      "Bash(cd \"C:/Users/GrybasTV/Documents/basketballprojekt\" && npm list next-auth 2>&1 | head -5)",
+      "Bash(cd \"C:/Users/GrybasTV/Documents/basketballprojekt\" && npm install next-auth@^4 2>&1)"
+    ]
+  }
+}
