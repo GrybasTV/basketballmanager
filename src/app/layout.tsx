@@ -18,6 +18,8 @@ export const metadata: Metadata = {
   description: "Krepšinio trenerio valdomas žaidimas",
 };
 
+export const dynamic = 'force-dynamic';
+
 export default function RootLayout({
   children,
 }: Readonly<{
