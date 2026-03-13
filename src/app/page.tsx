@@ -1,4 +1,3 @@
-export const runtime = 'edge';
 import Link from 'next/link';
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
