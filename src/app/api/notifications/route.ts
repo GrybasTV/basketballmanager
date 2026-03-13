@@ -76,7 +76,7 @@ export async function PUT(req: NextRequest) {
   }
 
   try {
-    const { notificationIds, markAll } = await req.json()
+    const { notificationIds, markAll } = await req.json() as any
 
     if (markAll) {
       await prisma.notification.updateMany({
@@ -111,7 +111,7 @@ export async function PUT(req: NextRequest) {
 
 // POST - Create notification (internal use)
 export async function POST(req: NextRequest) {
-  const { userId, type, content } = await req.json()
+  const { userId, type, content } = await req.json() as any
 
   if (!userId || !type || !content) {
     return NextResponse.json({ error: "Trūksta duomenų" }, { status: 400 })

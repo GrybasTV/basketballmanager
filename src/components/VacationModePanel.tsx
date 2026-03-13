@@ -66,7 +66,7 @@ export function VacationModePanel() {
 
     try {
       const res = await fetch("/api/user/activity")
-      const activityData = await res.json()
+      const activityData = await res.json() as any
 
       if (res.ok) {
         setData(activityData)
@@ -88,7 +88,7 @@ export function VacationModePanel() {
         body: JSON.stringify({ action: "start_vacation", days: vacationDays })
       })
 
-      const result = await res.json()
+      const result = await res.json() as any
 
       if (res.ok) {
         setShowVacationModal(false)
@@ -116,7 +116,7 @@ export function VacationModePanel() {
         body: JSON.stringify({ action: "end_vacation" })
       })
 
-      const result = await res.json()
+      const result = await res.json() as any
 
       if (res.ok) {
         checkActivity()
@@ -141,7 +141,7 @@ export function VacationModePanel() {
         body: JSON.stringify({ action: "extend_vacation", days: 7 })
       })
 
-      const result = await res.json()
+      const result = await res.json() as any
 
       if (res.ok) {
         checkActivity()
@@ -163,7 +163,7 @@ export function VacationModePanel() {
 
     try {
       const res = await fetch("/api/user/activity", { method: "DELETE" })
-      const result = await res.json()
+      const result = await res.json() as any
 
       if (res.ok) {
         checkActivity()

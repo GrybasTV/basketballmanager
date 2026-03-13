@@ -109,7 +109,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { action, days } = await req.json()
+    const { action, days } = await req.json() as any
 
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },

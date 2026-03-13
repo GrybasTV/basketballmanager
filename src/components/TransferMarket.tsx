@@ -85,7 +85,7 @@ export function TransferMarket() {
 
     try {
       const res = await fetch("/api/transfers")
-      const marketData = await res.json()
+      const marketData = await res.json() as any
 
       if (res.ok) {
         setData(marketData)
@@ -115,7 +115,7 @@ export function TransferMarket() {
         })
       })
 
-      const result = await res.json()
+      const result = await res.json() as any
 
       if (res.ok) {
         alert(result.message)
@@ -150,7 +150,7 @@ export function TransferMarket() {
         body: JSON.stringify({ offerId })
       })
 
-      const result = await res.json()
+      const result = await res.json() as any
 
       if (res.ok) {
         alert(result.message)

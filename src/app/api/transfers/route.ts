@@ -117,7 +117,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { playerId, wageOffered, roleOffered, minutesOffered, offerCategory } = await req.json()
+    const { playerId, wageOffered, roleOffered, minutesOffered, offerCategory } = await req.json() as any
 
     // Validate inputs
     if (!playerId || !wageOffered || !roleOffered) {

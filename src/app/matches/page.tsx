@@ -6,7 +6,7 @@ async function getMatches() {
     cache: 'no-store',
   });
   if (!res.ok) return [];
-  return res.json();
+  return res.json() as any;
 }
 
 async function simulateMatch(matchId: string) {

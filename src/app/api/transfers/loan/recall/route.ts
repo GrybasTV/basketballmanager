@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { playerId } = await req.json()
+    const { playerId } = await req.json() as any
 
     if (!playerId) {
       return NextResponse.json({ error: "Nenurodytas žaidėjas" }, { status: 400 })

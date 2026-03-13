@@ -163,7 +163,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { playerId, contractId } = await req.json()
+    const { playerId, contractId } = await req.json() as any
 
     if (!playerId && !contractId) {
       return NextResponse.json({ error: "Nurodykite žaidėją ar sutartį" }, { status: 400 })

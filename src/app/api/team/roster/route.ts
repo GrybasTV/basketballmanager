@@ -66,7 +66,7 @@ export async function PUT(req: NextRequest) {
   }
 
   try {
-    const { activePlayerIds, benchPlayerIds } = await req.json()
+    const { activePlayerIds, benchPlayerIds } = await req.json() as any
 
     const team = await prisma.team.findUnique({
       where: { id: session.user.teamId },

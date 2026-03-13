@@ -5,7 +5,7 @@ async function getLeagueId() {
     cache: 'no-store',
   });
   if (!res.ok) return null;
-  const leagues = await res.json();
+  const leagues = await res.json() as any;
   return leagues[0]?.id || null;
 }
 
@@ -14,7 +14,7 @@ async function getStandings(leagueId: string) {
     cache: 'no-store',
   });
   if (!res.ok) return [];
-  return res.json();
+  return res.json() as any;
 }
 
 export default async function StandingsPage() {

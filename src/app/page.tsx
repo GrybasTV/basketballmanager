@@ -8,7 +8,7 @@ async function getLeagueData() {
     cache: 'no-store',
   });
   if (!res.ok) return [];
-  return res.json();
+  return res.json() as any;
 }
 
 async function getTopPlayers() {
@@ -16,7 +16,7 @@ async function getTopPlayers() {
     cache: 'no-store',
   });
   if (!res.ok) return [];
-  return res.json();
+  return res.json() as any;
 }
 
 export default async function HomePage() {

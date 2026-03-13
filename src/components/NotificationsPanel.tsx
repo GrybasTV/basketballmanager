@@ -44,7 +44,7 @@ export function NotificationsPanel() {
 
     try {
       const res = await fetch("/api/notifications?limit=10")
-      const data = await res.json()
+      const data = await res.json() as any
 
       if (res.ok) {
         setNotifications(data.notifications)

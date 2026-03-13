@@ -89,7 +89,7 @@ export function TacticsAndTraining() {
 
     try {
       const res = await fetch("/api/team/training")
-      const data = await res.json()
+      const data = await res.json() as any
 
       if (res.ok) {
         setPlayers(data.team.players)

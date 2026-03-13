@@ -5,7 +5,7 @@ async function getTeams() {
     cache: 'no-store',
   });
   if (!res.ok) return [];
-  return res.json();
+  return res.json() as any;
 }
 
 export default async function TeamsPage() {

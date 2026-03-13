@@ -61,7 +61,7 @@ export function EconomyManager() {
 
     try {
       const res = await fetch("/api/team/economy")
-      const economyData = await res.json()
+      const economyData = await res.json() as any
 
       if (res.ok) {
         setData(economyData)
@@ -90,7 +90,7 @@ export function EconomyManager() {
         body: JSON.stringify({ action: "bailout" })
       })
 
-      const result = await res.json()
+      const result = await res.json() as any
 
       if (res.ok) {
         setMessage({ type: "success", text: result.message })

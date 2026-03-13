@@ -58,7 +58,7 @@ export async function PUT(req: NextRequest) {
   }
 
   try {
-    const { tactics, trainingPlans } = await req.json()
+    const { tactics, trainingPlans } = await req.json() as any
 
     // Update team tactics (would store in separate table in full implementation)
     // Update training plans for players

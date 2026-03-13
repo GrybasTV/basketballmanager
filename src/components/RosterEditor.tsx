@@ -63,7 +63,7 @@ export function RosterEditor() {
 
     try {
       const res = await fetch("/api/team/roster")
-      const data = await res.json()
+      const data = await res.json() as any
 
       if (res.ok) {
         setPlayers(data.team.players)
@@ -143,7 +143,7 @@ export function RosterEditor() {
         body: JSON.stringify({ activePlayerIds, benchPlayerIds: [] })
       })
 
-      const data = await res.json()
+      const data = await res.json() as any
 
       if (res.ok) {
         setMessage({ type: "success", text: "Sudėtis išsaugota!" })

@@ -35,7 +35,7 @@ export default function RegisterPage() {
     // Fetch available teams
     fetch("/api/auth/register")
       .then((res) => res.json())
-      .then((data) => {
+      .then((data: any) => {
         setTeams(data)
         setIsLoadingTeams(false)
       })
@@ -83,7 +83,7 @@ export default function RegisterPage() {
         }),
       })
 
-      const data = await res.json()
+      const data = await res.json() as any
 
       if (!res.ok) {
         setError(data.error || "Registracija nepavyko")

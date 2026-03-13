@@ -9,7 +9,7 @@ async function getHallOfFame(category: string = "points") {
   })
 
   if (!res.ok) return { hallOfFame: [], seasonLeaders: [], categories: [] }
-  return res.json()
+  return res.json() as any
 }
 
 export default async function HallOfFamePage({

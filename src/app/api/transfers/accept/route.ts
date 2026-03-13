@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { offerId } = await req.json()
+    const { offerId } = await req.json() as any
 
     if (!offerId) {
       return NextResponse.json({ error: "Nenurodytas pasiūlymas" }, { status: 400 })

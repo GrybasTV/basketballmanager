@@ -6,7 +6,7 @@ async function getTeam(id: string) {
     cache: 'no-store',
   });
   if (!res.ok) return null;
-  return res.json();
+  return res.json() as any;
 }
 
 export default async function TeamPage({ params }: { params: Promise<{ id: string }> }) {
