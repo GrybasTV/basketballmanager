@@ -9,7 +9,7 @@ const config = {
       queue: "dummy",
     },
   },
-  edgeExternals: ["node:crypto"],
+  edgeExternals: ["node:crypto", "jose", "@panva/hkdf", "openid-client"],
   middleware: {
     external: true,
     override: {
